@@ -4,12 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Broadcasts</title>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function (OneSignal) {
+        await OneSignal.init({
+          appId: "YOUR_ONESIGNAL_APP_ID",
+          notifyButton: {
+            enable: true,
+          },
+        });
+      });
+    </script>
     <style>
       :root {
         color-scheme: light;
         --bg: #f4f1ea;
         --ink: #1c1917;
-        --muted: #57534e;
         --line: #e7e5e4;
         --card: #fff;
       }
@@ -34,17 +45,6 @@
         border: 1px solid var(--line);
         border-radius: 16px;
         padding: 32px;
-      }
-
-      h1 {
-        margin: 0 0 8px;
-        font-size: 1.5rem;
-        letter-spacing: -0.02em;
-      }
-
-      .lede {
-        margin: 0 0 24px;
-        color: var(--muted);
       }
 
       label {
@@ -84,19 +84,10 @@
       button:hover {
         background: #000;
       }
-
-      #status {
-        min-height: 1.5em;
-        margin: 16px 0 0;
-        color: var(--muted);
-        font-size: 0.875rem;
-      }
     </style>
   </head>
   <body>
     <main>
-      <h1>Broadcasts</h1>
-      <p class="lede">Enter your email to try OneSignal on this site.</p>
       <form id="signup">
         <label for="email">Email</label>
         <input
@@ -109,46 +100,13 @@
         />
         <button type="submit">Subscribe</button>
       </form>
-      <p id="status" role="status"></p>
     </main>
-
-    <!--
-      Replace YOUR_ONESIGNAL_APP_ID with the App ID from
-      OneSignal → Settings → Keys & IDs.
-      The SDK stays off until that string is a real id.
-    -->
     <script>
-      const ONESIGNAL_APP_ID = "YOUR_ONESIGNAL_APP_ID";
-      const status = document.getElementById("status");
-
-      if (ONESIGNAL_APP_ID !== "YOUR_ONESIGNAL_APP_ID") {
-        const sdk = document.createElement("script");
-        sdk.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-        sdk.defer = true;
-        document.head.appendChild(sdk);
-
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
-        window.OneSignalDeferred.push(async function (OneSignal) {
-          await OneSignal.init({
-            appId: ONESIGNAL_APP_ID,
-          });
-        });
-      }
-
       document.getElementById("signup").addEventListener("submit", function (event) {
         event.preventDefault();
         const email = new FormData(event.currentTarget).get("email");
-
-        if (ONESIGNAL_APP_ID === "YOUR_ONESIGNAL_APP_ID") {
-          status.textContent =
-            "Page is up. Replace YOUR_ONESIGNAL_APP_ID in index.html to connect OneSignal.";
-          return;
-        }
-
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
         window.OneSignalDeferred.push(async function (OneSignal) {
           await OneSignal.User.addEmail(String(email));
-          status.textContent = "Email added in OneSignal.";
         });
       });
     </script>
